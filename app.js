@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const Routes = require('./routes/route');
 
 const app = express();
 
@@ -11,5 +11,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.get("/", (req, res) => {
     res.status(200).json({ alive: "True" });
   });
+
+  /* Telling the server to use the routes in the UserRoutes file. */
+app.use("/", Routes);
 
 module.exports = app;
