@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-/* This is creating a new schema for the user model. */
-const userSchema = new Schema(
+/* This is creating a new schema for the post. */
+const postSchema = new Schema(
   {
     username: {
       type: String,
       required: true,
     },
-    password: {
+    title: {
       type: String,
       required: true,
     },
@@ -17,4 +17,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Post", postSchema);
