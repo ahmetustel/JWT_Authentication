@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const app = require('./app');
 const PORT = process.env.PORT || 3000;
 
-require('dotenv').config();
+require('dotenv').config(); //bunu birkere yazdın tüm projedeki her dosyada ulaşilabilir hale gelir.
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
