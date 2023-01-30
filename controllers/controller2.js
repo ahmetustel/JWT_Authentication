@@ -52,7 +52,7 @@ const createUser = async (req, res) => {
 
     /*shemadan "user" objesi oluşturup, oluşturulan objeye post edilen body değişkenlerine atmak hata almamızı
       engeller. Bunun için; */
-    const newUser = await new User({ username: req.body.username, password: hashedPassword }); // user object oluşturulur
+    const newUser = await new User({ username: req.body.username, password: req.body.password, hashedpassword: hashedPassword }); // user object oluşturulur
     const createdUser = await newUser.save(); // oluşturulan object, veritabanına kaydedilir.
     res.status(201).json({ status: true, message: createdUser });
 
@@ -62,6 +62,7 @@ const createUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
+
   const users = await User.find();
   const loginingUser = users.find(user => user.username === req.body.username);
 
@@ -70,7 +71,7 @@ const login = async (req, res) => {
     return res.status(400).send('cannot find user');
   }
   try {
-    if (await brcpt.compare(req.body.password, loginingUser.password)) {
+    if (await brcpt.compare(req.body.password, loginingUser.hashedpassword)) {
 
       //Eğer password doğruysa token oluşturulur
       const secretKey = process.env.api_secret_key // Kullanılacak secret key environment değişkeninden alınır
@@ -78,14 +79,31 @@ const login = async (req, res) => {
       const payLoad = { name, password }; // bu username ve şifre payload olarak ayarlanır
 
       /*1.parametre: payload, 2.parametre: secretKey, 3.parametre: expire time*/
-      const token = jwt.sign(payLoad, secretKey, { expiresIn: 120 /*dk*/ }); // TOKEN'IN OLUŞTUĞU KOD
+      const accessToken = jwt.sign(payLoad, secretKey, { expiresIn: 120 /*dk*/ }); // TOKEN'IN OLUŞTUĞU KOD
       console.log('Success');
+      // const token = req.headers.authorization.split(" ")[1];
+      // console.log(token);
+      // console.log(req.headers.authorization.split(' ')[1]);
+
+    //   function authToken(req, res, next) {
+    //     const authHeader = req.headers['authorization'];
+    //     const token = authHeader && authHeader.split(' ')[1];
+    //     if (token == null) return res.sendStatus(401);
+    
+    //     jwt.verify(token, process.env.api_secret_key, (err,loginingUser)=>{
+    //         if(err) return res.sendStatus(403) // token var ama artık geçerli değil ise 403
+    //         req.body.username = loginingUser.username;
+    //         next();
+    //     });
+    // }
+
       res.status(201).json({
         status: true,
         name,
         password,
-        token
+        accessToken: accessToken
       });
+
     } else {
       console.log('Not Allowed');
       res.send('Not Allowed');

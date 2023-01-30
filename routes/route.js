@@ -1,5 +1,5 @@
 const express = require("express");
-
+const authToken = require("../middleware/authToken");
 const {
   getPosts,
   addPost,
@@ -15,7 +15,7 @@ const router = express.Router();
 /* Creating the routes for the user controller. */
 router.get("/posts", getPosts);
 
-router.get("/users/:name", getUser);
+router.get("/users/:name",authToken, getUser);
 
 router.post("/addPost", addPost);
 
