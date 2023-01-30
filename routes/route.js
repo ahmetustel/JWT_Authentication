@@ -8,7 +8,7 @@ const {
   login,
   deleteUser,
   getUser
-} = require("../controllers/controller2");
+} = require("../controllers/controller");
 
 const router = express.Router();
 
