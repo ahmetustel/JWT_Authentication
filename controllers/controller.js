@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find().lean();
+    const posts = await Post.find().lean();// lean() collectiondaki verilerin daha az yer kaplayıp hatasız döndürülmesini sağlar
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json(error);
@@ -50,9 +50,8 @@ const createUser = async (req, res) => {
     console.log(req.body.password);
     console.log(hashedPassword);
 
-    /*shemadan "user" objesi oluşturup, oluşturulan objeye post edilen body değişkenlerine atmak hata almamızı
-      engeller. Bunun için; */
-    const newUser = await new User({ username: req.body.username, password: req.body.password, hashedpassword: hashedPassword }); // user object oluşturulur
+    /* ./model/model.js'den "user" objesi request body'den gelen bilgilerle oluşturulur. NOT: Hata alınmasını engeller */
+    const newUser = await new User({ username: req.body.username, password: req.body.password, hashedpassword: hashedPassword });
     const createdUser = await newUser.save(); // oluşturulan object, veritabanına kaydedilir.
     res.status(201).json({ status: true, message: createdUser });
 
@@ -81,21 +80,6 @@ const login = async (req, res) => {
       /*1.parametre: payload, 2.parametre: secretKey, 3.parametre: expire time*/
       const accessToken = jwt.sign(payLoad, secretKey, { expiresIn: 120 /*dk*/ }); // TOKEN'IN OLUŞTUĞU KOD
       console.log('Success');
-      // const token = req.headers.authorization.split(" ")[1];
-      // console.log(token);
-      // console.log(req.headers.authorization.split(' ')[1]);
-
-    //   function authToken(req, res, next) {
-    //     const authHeader = req.headers['authorization'];
-    //     const token = authHeader && authHeader.split(' ')[1];
-    //     if (token == null) return res.sendStatus(401);
-    
-    //     jwt.verify(token, process.env.api_secret_key, (err,loginingUser)=>{
-    //         if(err) return res.sendStatus(403) // token var ama artık geçerli değil ise 403
-    //         req.body.username = loginingUser.username;
-    //         next();
-    //     });
-    // }
 
       res.status(201).json({
         status: true,
